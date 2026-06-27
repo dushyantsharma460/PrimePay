@@ -18,6 +18,8 @@ const SUPPORTED_BANKS = [
   },
 ];
 
+// AddMoney Card Component
+
 export const AddMoney = () => {
   const [redirectUrl, setRedirectUrl] = useState(
     SUPPORTED_BANKS[0]?.redirectUrl
