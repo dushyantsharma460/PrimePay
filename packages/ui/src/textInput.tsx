@@ -1,16 +1,32 @@
-"use client"
+"use client";
 
 export const TextInput = ({
-    placeholder,
-    onChange,
-    label
+  placeholder,
+  onChange,
+  label,
 }: {
-    placeholder: string;
-    onChange: (value: string) => void;
-    label: string;
+  placeholder: string;
+  onChange: (value: string) => void;
+  label: string;
 }) => {
-    return <div className="pt-2">
-        <label className="block mb-2 text-sm font-medium text-gray-900">{label}</label>
-        <input onChange={(e) => onChange(e.target.value)} type="text" id="first_name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder={placeholder} />
+  const inputId = label.toLowerCase().replace(/\s+/g, "-");
+
+  return (
+    <div className="pt-2">
+      <label
+        htmlFor={inputId}
+        className="mb-2 block text-sm font-medium text-text-primary"
+      >
+        {label}
+      </label>
+      <input
+        id={inputId}
+        onChange={(e) => onChange(e.target.value)}
+        type="text"
+        className="block w-full rounded-lg border border-border bg-surface px-3.5 py-2.5 text-sm text-text-primary shadow-sm transition-colors placeholder:text-text-secondary/70 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+        placeholder={placeholder}
+        aria-label={label}
+      />
     </div>
-}
+  );
+};

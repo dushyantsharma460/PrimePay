@@ -152,6 +152,14 @@ exports.Prisma.BalanceScalarFieldEnum = {
   locked: 'locked'
 };
 
+exports.Prisma.P2pTransferScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  timestamp: 'timestamp',
+  fromUserId: 'fromUserId',
+  toUserId: 'toUserId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -181,7 +189,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Merchant: 'Merchant',
   OnRampTransaction: 'OnRampTransaction',
-  Balance: 'Balance'
+  Balance: 'Balance',
+  p2pTransfer: 'p2pTransfer'
 };
 
 /**

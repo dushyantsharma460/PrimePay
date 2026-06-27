@@ -6,38 +6,50 @@ const app = express();
 app.use(express.json())
 
 app.post("/hdfcWebhook", async (req, res) => {
-    //TODO: Add zod validation here?
-    //TODO: HDFC bank should ideally send us a secret so we know this is sent by them
-    //TODO: Check if this onRammpTxn is processing or not if in processing then increase the balance
+    const token = req.body.token as string | undefined;
 
-    const paymentInformation: {
-        token: string;
-        userId: string;
-        amount: string
-    } = {
-        token: req.body.token,
-        userId: req.body.user_identifier,
-        amount: req.body.amount
-    };
+    if (!token) {
+        return res.status(400).json({
+            message: "Missing token",
+        });
+    }
+
     try {
         await db.$transaction(async (tx) => {
-            await tx.balance.updateMany({
+            const txn = await tx.onRampTransaction.findFirst({
                 where: {
-                    userId: Number(paymentInformation.userId)
+                    token,
+                    status: "Processing",
                 },
-                data: {
-                    amount: {
-                        increment: Number(paymentInformation.amount)
-                    }
-                }
             });
-            await tx.onRampTransaction.updateMany({
+
+            if (!txn) {
+                throw new Error("Transaction not found or already processed");
+            }
+
+            await tx.balance.upsert({
                 where: {
-                    token: paymentInformation.token
+                    userId: txn.userId,
+                },
+                create: {
+                    userId: txn.userId,
+                    amount: txn.amount,
+                    locked: 0,
+                },
+                update: {
+                    amount: {
+                        increment: txn.amount,
+                    },
+                },
+            });
+
+            await tx.onRampTransaction.update({
+                where: {
+                    id: txn.id,
                 },
                 data: {
                     status: "Success",
-                }
+                },
             });
         }, {
             maxWait: 15_000,
