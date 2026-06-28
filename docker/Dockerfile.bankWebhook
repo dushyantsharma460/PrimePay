@@ -1,0 +1,27 @@
+FROM node:20-alpine AS base
+
+FROM base AS builder
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+RUN npm install turbo --global
+COPY . .
+RUN turbo prune bank-webhook --docker
+
+FROM base AS runner
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+COPY --from=builder /app/out/json/ .
+RUN npm ci
+
+COPY --from=builder /app/out/full/ .
+
+WORKDIR /app/packages/db
+RUN npx prisma generate
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+EXPOSE 8800
+
+CMD ["npx", "tsx", "apps/bank-webhook/src/index.ts"]
