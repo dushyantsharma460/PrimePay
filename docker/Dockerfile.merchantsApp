@@ -17,6 +17,7 @@ RUN npm ci
 COPY --from=builder /app/out/full/ .
 RUN npm install turbo --global
 WORKDIR /app/packages/db
+ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/primepay?sslmode=disable"
 RUN npx prisma generate
 WORKDIR /app
 RUN turbo run build --filter=docs
