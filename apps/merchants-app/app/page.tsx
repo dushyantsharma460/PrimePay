@@ -36,7 +36,7 @@ export default function MerchantsPage() {
                 Merchant Dashboard 👋
               </h1>
               <p className="mt-2 text-sm text-blue-100">
-                Welcome back! Here's an overview of your business.
+                Welcome back! Here is an overview of your business.
               </p>
             </div>
 
